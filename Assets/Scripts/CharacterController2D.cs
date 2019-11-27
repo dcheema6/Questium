@@ -7,9 +7,6 @@ using UnityEngine.U2D;
 
 namespace RPGM.Gameplay
 {
-    /// <summary>
-    /// A simple controller for animating a 4 directional sprite using Physics.
-    /// </summary>
     public class CharacterController2D : MonoBehaviour
     {
         public float speed = 1;
@@ -22,9 +19,9 @@ namespace RPGM.Gameplay
         SpriteRenderer spriteRenderer;
         PixelPerfectCamera pixelPerfectCamera;
 
-        enum State
+        public enum State
         {
-            Idle, Moving
+            Idle, Moving, Battle
         }
 
         State state = State.Idle;
@@ -33,6 +30,47 @@ namespace RPGM.Gameplay
         float startTime;
         float distance;
         float velocity;
+
+        void Awake()
+        {
+            rigidbody2D = GetComponent<Rigidbody2D>();
+            spriteRenderer = GetComponent<SpriteRenderer>();
+            pixelPerfectCamera = GameObject.FindObjectOfType<PixelPerfectCamera>();
+        }
+
+        void Update()
+        {
+            switch (state)
+            {
+                case State.Idle:
+                    IdleState();
+                    break;
+                case State.Moving:
+                    MoveState();
+                    break;
+                case State.Battle:
+                    BattleState();
+                    break;
+            }
+        }
+
+        void LateUpdate()
+        {
+            if (pixelPerfectCamera != null)
+            {
+                transform.position = pixelPerfectCamera.RoundToPixel(transform.position);
+            }
+        }
+
+        public void SetState(State s)
+        {
+            state = s;
+        }
+
+        void BattleState()
+        {
+            print("Battle state");
+        }
 
         void IdleState()
         {
@@ -64,34 +102,6 @@ namespace RPGM.Gameplay
                 animator.SetInteger("WalkX", direction.x < 0 ? -1 : direction.x > 0 ? 1 : 0);
                 animator.SetInteger("WalkY", direction.y < 0 ? 1 : direction.y > 0 ? -1 : 0);
             }
-        }
-
-        void Update()
-        {
-            switch (state)
-            {
-                case State.Idle:
-                    IdleState();
-                    break;
-                case State.Moving:
-                    MoveState();
-                    break;
-            }
-        }
-
-        void LateUpdate()
-        {
-            if (pixelPerfectCamera != null)
-            {
-                transform.position = pixelPerfectCamera.RoundToPixel(transform.position);
-            }
-        }
-
-        void Awake()
-        {
-            rigidbody2D = GetComponent<Rigidbody2D>();
-            spriteRenderer = GetComponent<SpriteRenderer>();
-            pixelPerfectCamera = GameObject.FindObjectOfType<PixelPerfectCamera>();
         }
     }
 }
