@@ -32,9 +32,9 @@ public class AnimatedWalker {
             unitAnimation.PlayAnim(walkAnimType, lastMoveVector, walkFrameRate, null, null, null);
         }
     }
-
-    public void PlayIdleAnim(Vector3 dir) {
-        unitAnimation.PlayAnim(idleAnimType, dir, idleFrameRate, null, null, null);
+    
+    public void PlayIdleAnim(Vector3 animDir) {
+        unitAnimation.PlayAnim(idleAnimType, animDir, idleFrameRate, null, null, null);
     }
 
     public Vector3 GetLastMoveVector() {

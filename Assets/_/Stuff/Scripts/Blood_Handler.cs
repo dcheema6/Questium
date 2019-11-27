@@ -26,6 +26,7 @@ public class Blood_Handler {
     private static void InitIfNeeded() {
         if (initGameObject == null) {
             initGameObject = new GameObject("Blood_Handler");
+            ResetStatic();
             ComponentActions.AddComponent(initGameObject, null, null, null, Update_Static);
         }
     }

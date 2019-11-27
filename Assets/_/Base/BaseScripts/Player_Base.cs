@@ -13,13 +13,13 @@ public class Player_Base : MonoBehaviour {
     private V_UnitAnimation unitAnimation;
     private AnimatedWalker animatedWalker;
 
-    private void Start() {
+    private void Awake() {
         Transform bodyTransform = transform.Find("Body");
         unitSkeleton = new V_UnitSkeleton(1f, bodyTransform.TransformPoint, (Mesh mesh) => bodyTransform.GetComponent<MeshFilter>().mesh = mesh);
         unitAnimation = new V_UnitAnimation(unitSkeleton);
         
-        UnitAnimType idleUnitAnim = UnitAnimType.GetUnitAnimType("dBareHands_Idle");
-        UnitAnimType walkUnitAnim = UnitAnimType.GetUnitAnimType("dBareHands_Walk");
+        UnitAnimType idleUnitAnim = UnitAnimType.GetUnitAnimType("dSwordTwoHandedBack_Idle");
+        UnitAnimType walkUnitAnim = UnitAnimType.GetUnitAnimType("dSwordTwoHandedBack_Walk");
         UnitAnimType hitUnitAnim = UnitAnimType.GetUnitAnimType("dBareHands_Hit");
         UnitAnimType attackUnitAnim = UnitAnimType.GetUnitAnimType("dBareHands_PunchQuickAttack");
 
@@ -33,8 +33,16 @@ public class Player_Base : MonoBehaviour {
     public V_UnitAnimation GetUnitAnimation() {
         return unitAnimation;
     }
+
+    public AnimatedWalker GetAnimatedWalker() {
+        return animatedWalker;
+    }
     #endregion
 
+
+    public void SetLastMoveDir(Vector3 lastMoveDir) {
+        animatedWalker.SetMoveVector(lastMoveDir);
+    }
 
     public void PlayMoveAnim(Vector3 moveDir) {
         animatedWalker.SetMoveVector(moveDir);
@@ -42,6 +50,10 @@ public class Player_Base : MonoBehaviour {
 
     public void PlayIdleAnim() {
         animatedWalker.SetMoveVector(Vector3.zero);
+    }
+
+    public void PlayIdleAnim(Vector3 animDir) {
+        animatedWalker.PlayIdleAnim(animDir);
     }
     
     public bool IsPlayingPunchAnimation() {

@@ -124,9 +124,11 @@ namespace CodeMonkey.Utils {
             if (MouseUpdate != null) MouseUpdate();
 
         }
-        void Awake() {
+        private void Start() {
             posExit = transform.localPosition;
             posEnter = (Vector2)transform.localPosition + hoverBehaviour_Move_Amount;
+        }
+        void Awake() {
             SetHoverBehaviourType(hoverBehaviourType);
 
 #if SOUND_MANAGER

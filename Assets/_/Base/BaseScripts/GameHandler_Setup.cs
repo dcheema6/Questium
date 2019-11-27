@@ -10,46 +10,25 @@ public class GameHandler_Setup : MonoBehaviour {
 
     public static GridPathfinding gridPathfinding;
     [SerializeField] private CameraFollow cameraFollow;
-    [SerializeField] private CharacterAimHandler characterAimHandler;
+    [SerializeField] private PlayerOvermap playerOvermap;
+
+    private void Awake() {
+        new OvermapHandler(playerOvermap);
+    }
 
     private void Start() {
         //Sound_Manager.Init();
-        cameraFollow.Setup(GetCameraPosition, () => 60f, true, true);
+        cameraFollow.Setup(GetCameraPosition, () => 70f, true, true);
 
-        //FunctionPeriodic.Create(SpawnEnemy, 1.5f);
-        for (int i = 0; i < 1000; i++) SpawnEnemy();
-        
         gridPathfinding = new GridPathfinding(new Vector3(-400, -400), new Vector3(400, 400), 5f);
         gridPathfinding.RaycastWalkable();
 
-        EnemyHandler.Create(new Vector3(20, 0));
-
-        characterAimHandler.OnShoot += CharacterAimHandler_OnShoot;
-    }
-
-    private void CharacterAimHandler_OnShoot(object sender, CharacterAimHandler.OnShootEventArgs e) {
-        Shoot_Flash.AddFlash(e.gunEndPointPosition);
-        WeaponTracer.Create(e.gunEndPointPosition, e.shootPosition);
-        UtilsClass.ShakeCamera(.6f, .05f);
-
-        // Any enemy hit?
-        RaycastHit2D raycastHit = Physics2D.Raycast(e.gunEndPointPosition, (e.shootPosition - e.gunEndPointPosition).normalized, Vector3.Distance(e.gunEndPointPosition, e.shootPosition));
-        if (raycastHit.collider != null) {
-            EnemyHandler enemyHandler = raycastHit.collider.gameObject.GetComponent<EnemyHandler>();
-            if (enemyHandler != null) {
-                enemyHandler.Damage(characterAimHandler);
-            }
-        }
+        //OvermapHandler.SpawnFollower();
+        //OvermapHandler.SpawnEnemy(new Vector3(150, 0));
     }
 
     private Vector3 GetCameraPosition() {
-        Vector3 mousePosition = UtilsClass.GetMouseWorldPosition();
-        Vector3 playerToMouseDirection = mousePosition - characterAimHandler.GetPosition();
-        return characterAimHandler.GetPosition() + playerToMouseDirection * .3f;
+        return playerOvermap.GetPosition();
     }
 
-    private void SpawnEnemy() {
-        Vector3 spawnPosition = characterAimHandler.GetPosition() + UtilsClass.GetRandomDir() * 40f;// 100f;
-        EnemyHandler.Create(spawnPosition);
-    }
 }

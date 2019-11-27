@@ -25,10 +25,14 @@ namespace CodeMonkey.MonoBehaviours {
         private Camera myCamera;
         private Func<Vector3> GetCameraFollowPositionFunc;
         private Func<float> GetCameraZoomFunc;
+        private float cameraMoveSpeed;
+        private float cameraZoomSpeed;
 
         public void Setup(Func<Vector3> GetCameraFollowPositionFunc, Func<float> GetCameraZoomFunc, bool teleportToFollowPosition, bool instantZoom) {
             this.GetCameraFollowPositionFunc = GetCameraFollowPositionFunc;
             this.GetCameraZoomFunc = GetCameraZoomFunc;
+            SetCameraMoveSpeed(3f);
+            SetCameraZoomSpeed(1f);
 
             if (teleportToFollowPosition) {
                 Vector3 cameraFollowPosition = GetCameraFollowPositionFunc();
@@ -61,6 +65,14 @@ namespace CodeMonkey.MonoBehaviours {
             this.GetCameraZoomFunc = GetCameraZoomFunc;
         }
 
+        public void SetCameraMoveSpeed(float cameraMoveSpeed) {
+            this.cameraMoveSpeed = cameraMoveSpeed;
+        }
+
+        public void SetCameraZoomSpeed(float cameraZoomSpeed) {
+            this.cameraZoomSpeed = cameraZoomSpeed;
+        }
+
 
         private void Update() {
             HandleMovement();
@@ -74,7 +86,6 @@ namespace CodeMonkey.MonoBehaviours {
 
             Vector3 cameraMoveDir = (cameraFollowPosition - transform.position).normalized;
             float distance = Vector3.Distance(cameraFollowPosition, transform.position);
-            float cameraMoveSpeed = 3f;
 
             if (distance > 0) {
                 Vector3 newCameraPosition = transform.position + cameraMoveDir * distance * cameraMoveSpeed * Time.deltaTime;
@@ -95,7 +106,6 @@ namespace CodeMonkey.MonoBehaviours {
             float cameraZoom = GetCameraZoomFunc();
 
             float cameraZoomDifference = cameraZoom - myCamera.orthographicSize;
-            float cameraZoomSpeed = 1f;
 
             myCamera.orthographicSize += cameraZoomDifference * cameraZoomSpeed * Time.deltaTime;
 
