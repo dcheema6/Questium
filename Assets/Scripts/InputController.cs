@@ -4,9 +4,6 @@ using UnityEngine;
 
 namespace RPGM.UI
 {
-    /// <summary>
-    /// Sends user input to the correct control systems.
-    /// </summary>
     public class InputController : MonoBehaviour
     {
         public float stepSize = 0.1f;
@@ -57,6 +54,10 @@ namespace RPGM.UI
                 model.player.nextMoveCommand = Vector3.left * stepSize;
             else if (Input.GetKey(KeyCode.RightArrow))
                 model.player.nextMoveCommand = Vector3.right * stepSize;
+            else if (Input.GetMouseButtonDown(0))
+                model.player.FirePrimary();
+            else if (Input.GetMouseButtonDown(1))
+                model.player.FireConditional();
             else
                 model.player.nextMoveCommand = Vector3.zero;
         }

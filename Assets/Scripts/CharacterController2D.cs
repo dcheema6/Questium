@@ -14,15 +14,20 @@ namespace RPGM.Gameplay
         public Vector3 nextMoveCommand;
         public Animator animator;
         public bool flipX = false;
+        [SerializeField] int health;
+        [SerializeField] Projectile mainWeapon;
+        [SerializeField] Projectile conditionalWeapon;
+        public Transform target;
 
         new Rigidbody2D rigidbody2D;
         SpriteRenderer spriteRenderer;
         PixelPerfectCamera pixelPerfectCamera;
 
-        public enum State
+        enum State
         {
             Idle, Moving, Battle
         }
+        bool turn;
 
         State state = State.Idle;
         Vector3 start, end;
@@ -40,6 +45,31 @@ namespace RPGM.Gameplay
 
         void Update()
         {
+            if (state == State.Battle)
+            {
+                BattleState();
+            }
+            else if (target != null)
+            {
+                Vector3 distanceV = target.position - transform.position;
+                
+                if (Math.Abs(distanceV.magnitude) > 1.0f)
+                {
+                    if (Math.Abs(distanceV.x) > Math.Abs(distanceV.y))
+                    {
+                        nextMoveCommand = new Vector3(distanceV.x, 0.0f) * acceleration;
+                    }
+                    else
+                    {
+                        nextMoveCommand = new Vector3(0.0f, distanceV.y) * acceleration;
+                    }
+                }
+                else
+                {
+                    nextMoveCommand = Vector3.zero;
+                }
+            }
+
             switch (state)
             {
                 case State.Idle:
@@ -47,9 +77,6 @@ namespace RPGM.Gameplay
                     break;
                 case State.Moving:
                     MoveState();
-                    break;
-                case State.Battle:
-                    BattleState();
                     break;
             }
         }
@@ -62,14 +89,39 @@ namespace RPGM.Gameplay
             }
         }
 
-        public void SetState(State s)
+        public void TakeHit(int damage)
         {
-            state = s;
+            health -= damage;
+        }
+
+        public void ToBattle(Transform t)
+        {
+            state = State.Battle;
+            mainWeapon.target = t;
+            conditionalWeapon.target = t;
+        }
+
+        public void FirePrimary()
+        {
+            if (state == State.Battle)
+                Instantiate(mainWeapon, transform.position + new Vector3(1.0f, 0.0f), transform.rotation);
+        }
+
+        public void FireConditional()
+        {
+            if (state == State.Battle)
+                Instantiate(conditionalWeapon, transform.position + new Vector3(1.0f, 0.0f), transform.rotation);
+        }
+
+        public void SetTurn(bool t)
+        {
+            turn = t;
         }
 
         void BattleState()
         {
-            print("Battle state");
+            nextMoveCommand = Vector3.zero;
+            UpdateAnimator(nextMoveCommand);
         }
 
         void IdleState()

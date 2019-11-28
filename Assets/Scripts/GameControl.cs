@@ -25,6 +25,6 @@ public class GameControl : MonoBehaviour
         playerController.transform.position = new Vector2(27.5f, 0.25f);
         aiController.transform.position = new Vector2(34.0f, 0.25f);
 
-        playerController.SetState(RPGM.Gameplay.CharacterController2D.State.Battle);
+        playerController.ToBattle(aiController.transform);
     }
 }
